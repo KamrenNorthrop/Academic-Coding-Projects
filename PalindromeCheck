@@ -1,0 +1,80 @@
+#include <stdio.h>
+
+#define TRUE 1
+#define FALSE 0
+
+//Functions
+void remove_spaces(char *s);
+void keeps_chars_only(char s[]);
+void make_lowercase(char *s);
+_Bool palindromeCheck(char s[]);
+
+
+//Main Start
+int main (void){
+    char phrase[101];
+
+    //input
+    printf("Enter phrase to check if it's a palindrome: ");
+    fgets(phrase, 101, stdin);
+
+    //String strip, reformat, palindrome Check
+    printf("\bYou wrote: \b%s", phrase);
+    remove_spaces(phrase);
+    keeps_chars_only(phrase);
+    make_lowercase(phrase);
+
+    if (palindromeCheck(phrase) == TRUE){
+        printf("\bThis is a palindrome!\n");
+    }
+    else{
+        printf("This is not a palindrome\n");
+    }
+
+    return 0;
+}
+
+//-----------FUNCTIONS--------------------
+void remove_spaces(char* s){
+    char* d = s;
+    do{
+        while (*d== ' '){
+            ++d;
+        }
+    } while (*s++ = *d++);
+}
+//-------------------------------
+void keeps_chars_only(char string[]){
+    int i=0, j;
+    for (i = 0, j=0; string[i] != '\0'; ++i) {
+        while (!(string[i] >= 'a' && string[i] <= 'z') && !(string[i] >= 'A' && string[i] <= 'Z') &&
+               !(string[i] == '\0')) {
+            for (j = i; string[j] != '\0'; ++j) {
+                string[j] = string[j + 1];
+            }
+            string[j] = '\0';
+        }
+    }
+}
+//--------------------------------
+void make_lowercase(char *s){
+    int i=0;
+while(s[i] != '\0'){
+    if (s[i] >= 'A' && s[i] <= 'Z') s[i] += 32;
+    i++;
+    }
+}
+//---------------------------------
+_Bool palindromeCheck(char  s[]){
+   int i = 0;
+   int index = 0;
+
+    for (i=0; s[i] != '\0'; i++){
+        index++;
+}
+
+for (i=0; i < index/2; i++){
+    if (s[i] != s[index-1-i])
+        index=FALSE;
+    }
+}
