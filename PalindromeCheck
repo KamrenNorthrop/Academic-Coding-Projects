@@ -8,7 +8,6 @@ void keeps_chars_only(char s[]);
 void make_lowercase(char *s);
 _Bool palindromeCheck(char s[]);
 
-
 //Main Start
 int main (void){
     char phrase[101];
