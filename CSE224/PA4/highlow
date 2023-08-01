@@ -1,0 +1,88 @@
+#!/bin/bash
+#---------------------------------
+#Kamren Northrop - Date: 11/11/22
+#Course: CSE 224 - Programming Tools
+#Assignment: PA4 - highlow - Written in bash
+#Due Date: 11/11/22 - Finished: 11/10/22
+#Synopsis: highlow is a player vs. computer number guessing game. The player will pick a number between 1 and 100 by default
+#but has the option to use command line arguments to pick a number between 1 and any real legal positive integer. 
+#Once the player has a number in mind, the player will hit any key and the computer will begin to guess what that number  is. 
+#The player will use the h key to indicate that the guess was too high, l if too low, and c if correct. Once the computer guesses correctly, it will say that's easy and  
+#tell the player how many tries it took to guess the number.
+#If the guesses get into an unrealistic range, the program will recognize cheating and banish the player to the shadow realm.
+#--------------------------------- 
+
+echo "Welcome to highlow!" #Using as welcome message to player
+echo "~~~~~~Objective~~~~~~" #Using to separate welcome message from objective of game
+echo "The game is simple: you're going to choose a number and I'm going to guess it!" #Objective of game
+echo "~~~~~~~~RULES~~~~~~~~" #Using to separate objective of game from the rules
+echo "There are only 3 rules:" #Indicating how many rules there are
+echo "#1. If my guess is too low press the "l" key." #Indicating rule 1
+echo "#2. If my guess is too high press the "h" key." #Indicating rule 2
+echo "#3. If my guess is correct press the "c" key." #Indicating rule 3
+echo "No cheating, I'll know!" #Warning player not to cheat
+echo "~~~~~~~~~~~~~~~~~~~~~" #using to separate the end of game description to next echo'd line
+
+if [[ $# -eq 1 ]] #Using to indicate what to do if there is a command line argument given
+then
+  echo -n "It's time, think of a number between 1 and $1. When you're ready hit any key!" #Telling the player to think of a number between 1-$1 and press a key when ready
+  high=$1 #Using to set high to a value given as a command line argument
+  read -n 1 Variable_With_No_Significance_Other_Then_forcing_Someone_To_Press_A_Random_Key #Using only to force someone to press a key to continue.
+  echo"" #Using for formatting purposes
+fi
+
+if [[ $# -eq 0 ]] #Using to indicate what to do if no command line argument is given
+then
+  echo -n "It's time, think of a number between 1 and 100. When you're ready hit any key!" #Telling the player to think of a number between 1-100 and press a key when ready
+  high=100 #No command line argument given, setting high to 100 by default
+  read -n 1 Variable_With_No_Significance_Other_Then_Forcing_Someone_To_Press_A_Random_Key #Using only to force someone to press a key to continue.
+  echo"" #Using for formatting purposes
+fi
+
+#------Variable Values------
+TRUE=1 #Using for personal clarity for while loop condition
+tries=0 #Using to keep track of the amount of tries it take the computer to guess
+low=0 #Using to keep track of the last low value
+#---------------------------
+
+#-------GAME START----------
+while [[ $TRUE -eq $TRUE ]] #Weird way to basically say while 1 that was clearer for me then while 1 -eq 1. Gave it that C or Python vibe
+do
+
+  if [[ $high -lt $low ]] #Using to indicate if the player is cheating
+  then
+    echo "Banishing this cheater to the shadow realm!" #If they are cheating, banishing them to the shadow realm
+    exit 1 #And exiting the game
+  fi
+
+  guess=$(((high+low)/2)) #Using to figure out what to guess by adding the values of high+low and dividng that number by two, assigning it to variable guess
+  echo "Is your number $guess?" #Computer guesses the resulting number from the previous math
+  read -n 1 decision #Taking 1 keystroke at the keyboard, taking the h l c decision from the player and assigning to variable decision
+  echo "" #Using for formatting purposes
+
+  if [[ "$decision" == "c" ]] #Using to indicate what to do if the computer guesses correctly
+  then
+    echo -n "Get slapped kid." #Using to inform the player they have been out classed
+    tries=$((tries+1)) #incrementing tries variable to keep track of the number of guess attempts that have occured
+    break #Using to break from the loop if the computers guess was correct
+
+  elif [[ "$decision" == "h" ]] #Using to indicate what to do if the computer guesses high
+  then
+    high=$((guess-1)) #Using to take the high guess and subtract 1 from it, then assigning that new value to the high variable for a more accurate guess next turn
+    tries=$((tries+1)) #Incrementing tries variable to keep track of the number of guess attempts that have occured
+    continue #Using continue to restart the loop
+
+  elif  [[ "$decision" == "l" ]] #Using to indicate what to do if the computer guesses low
+  then
+    low=$((guess+1)) #Using to take the low guess and add 1 to it, then assigning that new value to the low variable for a more accurate guess next turn
+    tries=$((tries+1)) #Incrementing tries variable to keep track of the number of guess attempts that have occured
+    continue #Using continue to restart the loop
+
+  else #Using to indicate what to do if a player attempts to press a key that is NOT h l or c
+    echo "You have to press either "h" for high, "l" for low, "c" for correct!" #Reminds the player what the keys are and what those selections mean
+  fi
+done #this done signifies the end of the game
+#-----------------------------
+
+echo " It only took me $tries tries!" #Using to indicate to the player how many tries it took the computer to guess their number
+exit 1 #Game is over, exiting game.

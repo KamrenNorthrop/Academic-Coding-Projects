@@ -1,0 +1,141 @@
+#!/bin/bash
+
+#---------------------------------
+#Kamren Northrop - Date: 10/31/22
+#Course: CSE 224 - Programming Tools
+#Assignment: PA3 - Stick - Written in bash
+#Due Date: 11/4/22 - Finished: 10/31/22
+#Synopsis: Stick is a player vs computer game. Both players take turn picking up sticks and whoever picks up the last sticks wins! 
+#The game has very simple rules: you have  to play with 5 or more sticks, if the selection is out of bounds the game will exit. 
+#You can only pick up 1-4 sticks, if the selection is out of bounds the game will continue to ask you to pick a number until a valid number is chosen by the player.
+#----------------------------------
+
+#INPUT TO IDENTIFY HOW MANY STICKS WE'RE PLAYING WITH
+
+if [[ $# -eq 0 ]] #Using to identify if there were any command line arguments.
+then
+  echo "How many sticks?" #using to ask the player how many sticks they'd like to play with. 
+  read numSticks #If no command line arguments, then asking for user input to identify how many sticks to play with.
+else 
+  numSticks=$1 #otherwise, the command line integer as the number of sticks to play with.
+fi
+
+if [[ $numSticks -lt 5 ]] #Using to trouble shoot in case someone tries to play with less then 5 sticks.
+then
+  echo "Come back when you're ready to play with 5 or more sticks!" #using to inform the player to come back when they want to play with 5 or more sticks.
+  exit 1 #If someone chooses a number less then 5, echoing message indicating invalid selection and exiting.
+else
+  echo "Looks like we're playing with $numSticks sticks." #Otherwise, echoing the number of sticks to indicate a valid selection was made.
+fi
+
+#Displaying sticks------------------------------------------------
+
+i=0 #setting equal to zero to ensure proper number of |'s are printed in loop.
+while [[ i -lt $numSticks ]] #Using while look to take the number saved in numSticks and iterating to print the appropriate number of |'s for visual representation.
+do
+  echo -n "|" #printing | i number of times, using -n switch to stop printing to new line each time.
+  i=$((i+1)) #using to increment the value of i.
+done
+echo " ($numSticks)" #using this to create a visual numeric representation of the number of sticks along side the |'s that were printed.
+
+#------------------------------------------------------------------
+
+echo "Computers move first!" #incidating the computer takes the first move.
+
+#------------------Player Logic Past This Point--------------------
+
+#--------------------CPUturn Start---------------------------------
+
+while [[ $numSticks -gt 0 ]] #using this while loop to indicate the game is still going as long as the number of sticks is greater then zero.
+do
+  if [[ $CPUturn -eq 1 ]] #using this if statement to indicate that when the variable CPUturn is 1, it's the computers turn.
+  then
+    CPUmove=$((numSticks%5)) #using to identify the number of sticks the computer will take based on the amount of sticks still left on the board. 
+  fi
+
+  if [[ $CPUmove -eq 0 ]] #using to state that if the modulo math that takes place is equal to 0, the computer should only take 1 stick.
+  then
+    echo "The computer removes 1 stick." #echoing that the computer takes 1 stick for player reference.
+    numSticks=$((numSticks-1)) #using to mathmatically remove that 1 stick from the total number of sticks on the board.
+  else
+    echo "the computer removes $((numSticks%5)) sticks." #Otherwise, using to indicate what to do when the modulo math is not equal to zero.
+    numSticks=$((numSticks-numSticks%5)) #Using to indicate if modulo math is not equal to zero, remove numSticks%5 sticks from the total number of sticks on the board.
+  fi
+
+#Displaying sticks------------------------------------------------
+
+  i=0 #setting equal to zero to ensure proper number of |'s are printed in loop.
+  while [[ i -lt $numSticks ]] #using same while loop to take the new number of sticks and iterate through i times as long as i is less than the number of sticks.
+  do
+    echo -n "|" #printing |'s i times to create the new visual representation of the amount of sticks left.
+    i=$((i+1)) #using to increment i each iteration.
+  done
+  echo " ($numSticks)" #using to echo a visual numeric representation of the number of sticks left on the board.
+
+#-----------------------------------------------------------------
+
+  if [[ $numSticks -gt 0 ]] #using to determine if there are still sticks to play with on the board
+  then
+    CPUturn=0 #If there are more then 0 sticks, setting  CPUturn = 0 indicating it's no longer the computers turn.
+    playerTurn=1 #If therea re more then 0 sticks, setting playerTurn = 1 indicating it is now the players turn.
+  else #Otherwise, using to indicate what to do if numSticks is not greater then 0.
+    break #using to break out of the game loop if numSticks is not greater then 0.
+  fi
+
+#--------------------CPUturn End-----------------------------------
+
+#--------------------playerturn Start------------------------------
+
+  while [[ $playerTurn -eq 1 ]] #using to indicate the steps to take when it is the players turn.
+  do
+    echo "Pick a number between 1 and 4?" #using to inform player to pick a number between the given range: 1-4
+    read removeSticks #using to read the user input and save it to variable removeSticks
+
+  if [[ $removeSticks -lt 1 ]] #using to indcate what to do if a player tries to take less then 1 stick.
+  then 
+    echo "Too low!" #using to informing player that their selection is too lower of a number.
+    continue #using to interrupt the gameplay from advancing and to restart the loop at which point will redirect the player back to the read statement.
+  elif [[ $removeSticks -gt 4 ]] #using to indicate what to do if a plyer tires to take more then 4 sticks.
+  then
+    echo "Too high!" #using to inform player that their selection is too high of a number.
+    continue #using to interrupt the gameplay from advancing and to restart the loop at which point will redirect the player back to the read statement.
+  else #using to indicate what to do if the player picks a valid number within the given range.
+    echo "you remove $removeSticks sticks." #echo the number the player picked.
+    numSticks=$((numSticks-removeSticks)) #using to take the number the player picked and mathmatically remove it from the number of sticks chosen to play the game with.
+  fi
+
+#Dipslaying sticks--------------------------------------------------
+
+  i=0 #setting equal to zero to ensure proper number of |'s are printed in loop.
+  while [[ i -lt $numSticks ]] #using to iterate through the remaining number of sticks i times.
+  do
+    echo -n "|" #using to print |'s i times up to the number of sticks left to create a visual representation of the remaining sticks.
+    i=$((i+1)) #using to increment i through the iterations.
+  done
+  echo " ($numSticks)" #using to create a numeric representation of the amount of sticks left next to the |'s echo'd.
+
+#-------------------------------------------------------------------
+
+  if [[ $numSticks -gt 0 ]] #using to determine if there are more then 0 sticks left and if the game should continue.
+  then
+    CPUturn=1 #if there are more then zero sticks, setting CPUturn = 1, indicating it is now the computers turn.
+    playerTurn=0 #if there are more then zero sticks left, setting playerTurn = 0, indicating it is no longer the players turn.
+  else #using to indicate what to do if there are 0 sticks left.
+    break #if there are 0 sticks left, break from the game loop to end the game.
+  fi
+done
+
+#--------------------playerTurn End----------------------------------
+
+done #this done indicates the game is over
+
+#-------------------Winner Determination-----------------------------
+
+if [[ $CPUturn == 1 ]] #using to determine if the computer took the last turn of the game.
+then
+  echo "COMPUTER WINS!!!!" #using to indicate that if CPUturn does hold the value of 1, the computer took the last turn therefore the computer wins!
+  exit 1 #using to exit the game.
+else
+  echo "PLAYER WINS!!!!" #using to indicate that if CPUturn does NOT hold the value of 1, the player took the last turn therefore the player wins!
+  exit 1 #using to exit the game.
+fi

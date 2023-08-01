@@ -1,0 +1,166 @@
+#!/bin/bash
+
+#----------
+#Group name: KWMC
+#Group Members(Online/In-person): Kamren Northrop(Online), Wyatt Pigeon(In-person), Matthew Hall(Online), Colby Barkee(Online)
+#Course: CSE 224 - Programming Tools
+#Assignment: PA5 - Calendar with GUI - Written in bash
+#Due Date: 11/25/22 Finished Date: 11/18/22
+#Synopsis:
+#The following is a functioning calendar that implements a dialog graphical user interface. This calendar can be used to schedule appointments or to set various personal reminders as needed.
+#Users have the ability to schedule new appointments with various information(type,date,start/end times) delete cancelled appointments, or view upcoming appointments. 
+#While the program takes it upon itself to delete all old appointments on start up, while also implementing a pop up feature that indicates to a user what appointments they have for the day.
+#----------
+
+#----Setting variable to todays date to compare to see if a date is older
+todaysdate=`date +%Y%m%d`
+
+#----Checking to see if the file is empty or not
+if [[ -s /tmp/calendars/KWMC/apptKWMC.txt ]]
+then
+  TRUE=1 #If file is not empty, go into deleting old appt while loop
+else
+  TRUE=0 #Otherwise, do not go into deleting older appt while loop
+fi
+
+#----Deleting all appointments that happened in the past if file is not empty
+while [[ $TRUE -eq 1 ]] #using to indicate start of loop that should delete old appts
+do
+  cp /tmp/calendars/KWMC/apptKWMC.txt /tmp/calendars/KWMC/apptbackupKWMC.txt #copying contents of current appt file to a back up file
+
+  while read line #using to read lines of file
+  do
+    comparedate=`echo "$line" | awk -F\| '{print $2}'` #Using to pull the date of the already scheduled appointment in the file
+  done < /tmp/calendars/KWMC/apptKWMC.txt #Piping in current appt file into the while loop
+
+  if [[ $comparedate -lt $todaysdate ]] #using to check and see if the date pulled from the appt file is less then todays date
+  then
+    grep -v "$comparedate" /tmp/calendars/KWMC/apptbackupKWMC.txt > /tmp/calendars/KWMC/apptKWMC.txt #if it is, remove that appt from the file
+    continue #using to restart the loop
+  fi #end
+
+  if [[ $comparedate -ge $todaysdate ]] #Using to check if appts in file are all greater then or equal to todays date
+  then
+    TRUE=0 #if so, setting flag TRUE equal to 0 to break out of the loop
+  fi
+done #Indicating end of loop that deletes old appointments.
+
+#----Appointment Reminder
+if [[ $(grep "$(date "+%Y%m%d")" /tmp/calendars/KWMC/apptKWMC.txt) ]] #Using to find appointments that are for todays date
+then
+  dialog --infobox "$(grep "$(date "+%Y%m%d")" /tmp/calendars/KWMC/apptKWMC.txt)" 100 100 #If appt is for today, pops up a reminder showing you what appt you have when logging into program
+  read -rn1 input #using to force dialog box to stop until the next keystroke, variable has no other use.
+fi
+
+while [[ 1 -eq 1 ]] #start of the MAIN loop
+do
+
+#----GUI asking what people would like to do
+menu=$(dialog --menu "What would you like to do?" 0 0 0 "Schedule" "s" "Upcoming Appointments" "u" "Delete An Appointment" "d" --output-fd 1 2>/dev/null) #using to give user option of what they'd like to do
+
+if [[ "$?" == "1" ]] #if the user hits cancel at the main menu
+then
+  exit 1 #Then it exits program.
+fi
+
+#----Scheduling
+if [[ "$menu" == "Schedule" ]] #if user hits "s" at main menu
+then
+  # Add appt name
+  apptName=$(dialog --inputbox "What kind of appointment?" 0 0 --output-fd 1 2>/dev/null) #Then program asks the user to indicate the type of appointment
+  if [[ "$?" == "1" ]] #if user hits cancel at question screen
+  then
+    continue #Then program reverts to the top of the loop (goes back to main menu)
+  fi
+  # Pick day on calender dialog
+  mydate=$(dialog --date-format %Y%m%d --calendar "Pick a date to schedule" 0 0 --output-fd 1 2>/dev/null) #Otherwise, if user enters an appointment type program asks the user to pick a date
+  if [[ "$?" == "1" ]] #if user hits cancel at question screen
+  then
+    continue #then program reverts to the top of the loop (goes back to main menu)
+  fi
+  # YES/NO To add time to appt
+  dialog --yesno "Add appointment times?" 7 60 #Otherwise, if user picks date program asks user if they'd like to add appointment times (start/end)
+  if [[ "$?" == "0" ]] #if user hits yes
+  then
+    hasTime=1 #Setting flag variable equal to 1 to go into questions
+    # Add start time
+    startTime=$(dialog --inputbox "Start time? (am/pm?)" 0 0 --output-fd 1 2>/dev/null) #asks user to indicate start time
+    if [[ "$?" == "1" ]] #if user hits cancel at question screen
+    then
+      continue #then program reverts to the top of the loop (goes back to main menu)
+    fi
+    # Add end time
+    endTime=$(dialog --inputbox "End time? (am/pm?)" 0 0 --output-fd 1 2>/dev/null) #If user indicates start time, program will ask user to indicate end time
+    if [[ "$?" == "1" ]] #if user hits cancel at question screen
+    then
+      continue #then program reverts to the top of the loop (goes back to main menu)
+    fi
+  elif [[ "$?" == "1" ]] #If user indicates NO they do not want to add appointment times
+  then
+    hasTime=0 #setting flag variable equal to zero, goes into if statement 
+  fi
+
+  # If time was not added
+  if [[ "$hasTime" == "0" ]] #using to indicate user does not want to set appt times
+  then
+    echo "$apptName|$mydate" >> /tmp/calendars/KWMC/apptKWMC.txt #using to take the appt name and date user chose and append it to the appt text file to save appointment info
+  elif [[ "$hasTime" == "1" ]] #if user indicated yes to picking appointment times
+  then
+    echo "$apptName|$mydate|Start:$startTime|End:$endTime" >> /tmp/calendars/KWMC/apptKWMC.txt #using to take the appt name, date, start time, end time and append it to the appt text file to save appointment info
+  fi
+fi #end of scheduling
+
+#----Upcoming Appointments
+if [[ "$menu" == "Upcoming Appointments" ]] #If user indicates "u" at the main menu
+then
+  days=$(dialog --menu "View Appointment For Which Days?" 0 0 0 "Specified" "s" "All days" "a" --output-fd 1 2>/dev/null) #then using to ask user if they'd like to look at all or specific dates for scheduled appts
+    if [[ "$days" == "Specified" ]] #if user indicates "s" for specified days
+    then
+      apptDate=$(dialog --inputbox "Input date. (YYYYMMDD)" 0 0 --output-fd 1 2>/dev/null) #using to ask user what day they'd like to look at
+      if [[ $(grep "$apptDate" /tmp/calendars/KWMC/apptKWMC.txt) ]] #Taking user input date and using to find matches for that date in the saved appt info
+      then
+        dialog --infobox "$(grep "$apptDate" /tmp/calendars/KWMC/apptKWMC.txt)" 100 100 #Using to display appts in saved appt info with dates that match the user indicated date
+        read -rn1 input #using to stop the dialog box until the user hits any key, variable has no other use
+      else
+        dialog --infobox "No appointments found." 100 100 #using to indicate that no matching appointments were found
+        read -rn1 input #using to stop the dialog box until the user hits any key, variable has no other use
+      fi
+    else
+      Upcoming=$(cat /tmp/calendars/KWMC/apptKWMC.txt) #if grep does find matching dates, using cat to save those dates into variable
+      dialog --infobox "$Upcoming" 100 100 #using to display the dates saved in variable to user
+      read -rn1 input #using to stop the dialog box until the user hits any key, variable has no other use
+    fi
+fi #end of Upcoming appointments
+
+#----Deleting Appointments
+if [[ "$menu" == "Delete An Appointment" ]] #if user indicates "d" at the main menu
+then
+  cp /tmp/calendars/KWMC/apptKWMC.txt /tmp/calendars/KWMC/apptbackupKWMC.txt #copying currently saved appt info into a back up file
+  apptName=$(dialog --inputbox "Input name of appointment to be deleted." 0 0 --output-fd 1 2>/dev/null) #Using to ask the user the name of the appointment type
+   if [[ "$?" == "1" ]] #if user hits cancel at question screen
+  then
+    continue #then program reverts to the top of the loop (goes back to main menu)
+  fi
+  apptDate=$(dialog --inputbox "Input date of appointment to be deleted.(YYYYMMDD)" 0 0 --output-fd 1 2>/dev/null) #if user indicates name of appt, program asks user to indicate the date of the appt
+   if [[ "$?" == "1" ]] #if user hits cancel at question screen
+  then
+    continue #then program reverts to the top of the loop (goes back to main menu)
+  fi
+  remove="$apptName|$apptDate" #if user indicates both appt name and appt date, saving both user inputs into variable
+   if [[ "$?" == "1" ]] #if user hits cancel at question screen
+  then
+    continue #then program reverts to the top of the loop (goes back to main menu)
+  fi
+  if [[ $(grep "$remove" /tmp/calendars/KWMC/apptKWMC.txt) ]] #using variable to check if there is a match to the given information in the saved appt info
+  then
+    dialog --yesno "Are you sure you would like to delete $apptName?" 7 60 #if there is a match, using to ask user if they are sure they want to delete said appt
+    if [[ "$?" == "0" ]] #if user indicates yes
+    then
+      grep -v "$remove" /tmp/calendars/KWMC/apptbackupKWMC.txt > /tmp/calendars/KWMC/apptKWMC.txt #Then using grep -v to remove appt from the saved appt info file
+    fi
+  else #Otherwise, if there is no match
+    dialog --infobox "Appointment does not exist" -1 -1 #using to indicate to user that no match was found in the file
+    read -rn1 input #using to stop the dialog box until the user hits any key, variable has no other use
+  fi
+fi #end of deleting appointments
+done #End of the MAIN loop
