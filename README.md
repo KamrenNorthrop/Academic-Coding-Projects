@@ -1,7 +1,7 @@
 # C-projects
 This section will be an accumulation of all my school assignments done in C, Bash, and some Java.
-**
-Decimal to Binary:**
+
+**Decimal to Binary:**
 An implementation of a program that will take any number 0 to 2^64 and give you the binary representation in C.
 
 **Palindrome Check:**
@@ -11,18 +11,18 @@ An implementation of a program that will check to see if the word is a palindrom
 
 **PA1** -> An implementation of an alphabetically sorted linked list using chaining in C.
 
-**PA2 **-> An implementation of a hash table in C.
+**PA2**-> An implementation of a hash table in C.
 
-**PA3 **-> An implementation of a binary search tree in C.
+**PA3**-> An implementation of a binary search tree in C.
 
-**PA4 **-> An implementation of a solution for the knapsack problem using dynamic programming in C.
+**PA4**-> An implementation of a solution for the knapsack problem using dynamic programming in C.
 
 
 **CSE223 includes:**
 
 **PA1** -> An implementation of a class that prints "Hello World!" in Java.
 
-**PA2 **-> An implementation of a main class that does addition, multiplication of numbers given as a command line argument in Java.
+**PA2**-> An implementation of a main class that does addition, multiplication of numbers given as a command line argument in Java.
 
 **PA3** -> An implementation of a main and vector class that performs vector addition, subtraction, multiplication, computes length, computes the normalized vector in Java.
 
@@ -33,7 +33,7 @@ An implementation of a program that will check to see if the word is a palindrom
 **PA6** -> An implementation of the dots game using network threading in Java.
 
 
-**CSE224 includes: **
+**CSE224 includes:**
 
 **PA1** -> An implementation of a stick game in C.
 
