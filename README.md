@@ -1,5 +1,5 @@
 # C-projects
-This section will be an accumulation of all my school assignments done in C, Bash, and some Java.
+This section will be an accumulation of all my school assignments done in C, C++, Bash, and some Java.
 
 **Decimal to Binary:**
 
