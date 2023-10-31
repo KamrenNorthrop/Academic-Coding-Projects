@@ -47,3 +47,6 @@ This section will be an accumulation of all my school assignments done in C, C++
     
     **PA5** -> An implmentation of a personal calendar using a GUI in Bash.
 
+**C867 Includes:**
+
+    **Class Roster Project** -> An implementation of taking in an array of student information as strings, parsing said strings, and creating mutliple student objects that are stored in a roster array in C++
