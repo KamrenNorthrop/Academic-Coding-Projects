@@ -1,52 +1,65 @@
-# C-projects
-This section will be an accumulation of all my school assignments done in C, C++, Bash, and some Java.
+Class: D387 - Advanced Java
 
-**Decimal to Binary:**
+Name/WGU ID: Kamren Northrop, 011338614
 
-    An implementation of a program that will take any number 0 to 2^64 and give you the binary representation in C.
+Task B1:
 
-**Palindrome Check:**
+    •Created Resource bundle "welcome"
+        • Created welcome_en.properties(1): initialized welcome message in english.
+        • Created welcome_fr.properties(1): initialized welcome message in french.
 
-    An implementation of a program that will check to see if the word is a palindrome in C.
+    •Created translations package for conversions
+        • Created DisplayMessage.java(1-14): Retrieves welcome messages using the resource bundle. 
+        • Created WelcomeController.java(1-28): Implemented Rest endpoints to return welcome messages in English and French. 
 
-**CSE222 includes:**
+    •Edited D387SampleCodeApplication.java
+        •Line 17-34: Initialized a display message instance and created two threads to print welcome messages in English and in French.
 
-    **PA1** -> An implementation of an alphabetically sorted linked list using chaining in C.
+    •Edited ApiConfig.java
+        •Line 20-23: Configured CORS for /api/** endpoints with the HTTP methods GET and POST.
+
+    •Edited app.component.ts 
+        •Line 24-25: Added strings to hold welcome message urls for English and French api calls. 
+        •Line 33: Initialized an empty map to hold both english and french message with a string key. 
+        •Line 41-42: Fetching English and French welcome messages.
+        •Line 94-115: Created functions to retrieve and assign welcome messages in English(key: 'en') and French(key: 'fr') to the map from the backend using a HTTP request. 
+
+    •Edited app.component.html
+        •Line 8-9: Displayed the retrieved English and French welcome messages to the webpage.
+
+Task B2:
+
+    •Edited app.component.ts
+        •Line 139-140: Added variables CADprice and EURprice to the room interface to hold the CAD and EUR prices.
+        •Line 56-76: Edited the onSubmit function to iterate through each room and convert the price from the given USD to CAD and EUR, rounding all three prices to the nearest penny and save to their associated variables.
+            •Conversions made with the current exchange rates of: 1 USD = 1.37 CAD, 1 USD = 0.85 EUR.
+
+    •Edited app.component.html
+        •Line 81-83: Displayed all 3 currency conversions to the webpage with labels of (USD), (CAD), (EUR) and their associated currency symbols.
+
+Task B3:
+
+    •Created TimeZones class in the translations package 
+        •Line 9-19: Created methods that returns a single 12 hour formated string that includes ET, MT, and UTC time zones with the associated AM/PM label.
     
-    **PA2**-> An implementation of a hash table in C.
-    
-    **PA3**-> An implementation of a binary search tree in C.
-    
-    **PA4**-> An implementation of a solution for the knapsack problem using dynamic programming in C.
+    •Created TimeZoneController in the translation package
+        •Line 8-22: Implemented Rest endpoints to return the time zone string. 
+
+    •Edited app.component.ts
+        •Line 26: Added string to hold time zone url for api call.
+        •Line 34: Initialized empty string to hold formated time zone string returned from get request.
+        •Line 44: Added line to call the fetchTimeZones function
+        •Line 131-141: Created fetchTimeZones function to retrieve the time zones from the backend using a HTTP request.
+
+    •Edited appcomponent.html
+        •Line 41: Displayed time zone string to the web page below "Book for room" with styling for a better presentation. 
+
+Task C1
+
+    •Line 1-14: Created Dockerfile
 
 
-**CSE223 includes:**
-
-    **PA1** -> An implementation of a class that prints "Hello World!" in Java.
-    
-    **PA2**-> An implementation of a main class that does addition, multiplication of numbers given as a command line argument in Java.
-    
-    **PA3** -> An implementation of a main and vector class that performs vector addition, subtraction, multiplication, computes length, computes the normalized vector in Java.
-    
-    **PA4** -> An implementation of a dual hashmap program using generics that reads from a data.txt and saves key/value pairs to identify students, their sids, and the classes they enrolled in, in Java.
-    
-    **PA5** -> An implementation of a dots game with an implemented GUI using swing in Java.
-    
-    **PA6** -> An implementation of the dots game using network threading in Java.
 
 
-**CSE224 includes:**
 
-    **PA1** -> An implementation of a stick game in C.
-    
-    **PA2** -> An implementation of a program that counts how many words something appears from a file "keywords.txt" in C.
-    
-    **PA3** -> A re-implementation of the stick game in Bash.
-    
-    **PA4** -> An implmentation of a High/Low guessing game that demonstrates a divide and conquerer algo that can detect cheating in C.
-    
-    **PA5** -> An implmentation of a personal calendar using a GUI in Bash.
 
-**C867 Includes:**
-
-    **Class Roster Project** -> An implementation of taking in an array of student information as strings, parsing said strings, and creating mutliple student objects that are stored in a roster array in C++
